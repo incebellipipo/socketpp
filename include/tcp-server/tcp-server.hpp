@@ -22,12 +22,12 @@ namespace server {
 
     void handle(int client_fd);
 
-    std::string get_request(int client_fd);
+    char * get_request(int client_fd);
 
     void send_response(int client_fd, char *response);
 
   public:
-    TcpServer(u_int16_t port = 12345);
+    TcpServer(u_int16_t port = 6751);
 
     void destroy();
 

@@ -82,25 +82,19 @@ namespace server {
 
     auto request = get_request(client_fd);
 
-    printf("Got: %s\n", request.c_str());
+    printf("Got: %s\n", request);
 
-    time_t t = time(nullptr);
-    struct tm *tm = localtime(&t);
-
-    printf("Response: %s", asctime(tm));
-    send_response(client_fd, asctime(tm));
+    send_response(client_fd, "");
 
     socketpp::Socketpp::destroy_fd(client_fd);
   }
 
-  std::string TcpServer::get_request(int client_fd) {
-    char* data;
+  char * TcpServer::get_request(int client_fd) {
+    char* data = nullptr;
     if( socketpp::Socketpp::read_all(client_fd, data) < 0 ){
       std::cerr << "No data is read." << std::endl;
     }
-    std::string result(data);
-    free(data);
-    return result;
+    return data;
   }
 
   void TcpServer::send_response(int client_fd, char *response) {

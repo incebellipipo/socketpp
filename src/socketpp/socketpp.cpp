@@ -62,8 +62,6 @@ namespace socketpp {
 
     char buffer[BUFFER_SIZE] = {0};
 
-    data = (char*)malloc(BUFFER_SIZE * sizeof(char));
-    bzero(data, BUFFER_SIZE);
     if( bytes_in_buffer > 0 ){
 
       size_t total_chars = 0;
@@ -74,8 +72,6 @@ namespace socketpp {
         bzero(buffer, BUFFER_SIZE);
         chars_read = recv(fd, buffer,(size_t)BUFFER_SIZE - 1, 0);
         total_chars += chars_read;
-
-        buffer[chars_read] = '\0';
 
         if( chars_read < 0){
           if(errno == EINTR){
@@ -89,8 +85,9 @@ namespace socketpp {
         }
 
         // reallocate memory to fit the request
-        data = (char*) realloc(data, total_chars * sizeof(char));
-
+        char *hold_data = nullptr;
+        hold_data = (char*) realloc(data, total_chars * sizeof(char));
+        data = hold_data;
         // concatenate strings
         strcat(data, buffer);
 
