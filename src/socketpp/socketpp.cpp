@@ -57,10 +57,16 @@ namespace socketpp {
     ioctl(fd, FIONREAD, &bytes_in_buffer);
 
 #ifndef BUFFER_SIZE
-#define BUFFER_SIZE 128
+#define BUFFER_SIZE 8
 #endif
-
+    data = nullptr;
+    data = (char*)malloc(BUFFER_SIZE * sizeof(char));
+    if(not data){
+      return -1;
+    }
+    bzero(data, BUFFER_SIZE);
     char buffer[BUFFER_SIZE] = {0};
+
 
     if( bytes_in_buffer > 0 ){
 
@@ -85,11 +91,16 @@ namespace socketpp {
         }
 
         // reallocate memory to fit the request
-        char *hold_data = nullptr;
-        hold_data = (char*) realloc(data, total_chars * sizeof(char));
+        char* hold_data = nullptr;
+        hold_data = (char*) realloc(data, strlen(data) + strlen(buffer) + 1);
+        if(not hold_data){
+          return -1;
+        }
         data = hold_data;
+
         // concatenate strings
-        strcat(data, buffer);
+        memcpy(data + strlen(data), buffer, BUFFER_SIZE);
+
 
         // if we read less than we want, than there is nothing to read
         if( chars_read < BUFFER_SIZE){

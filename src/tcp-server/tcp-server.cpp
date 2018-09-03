@@ -82,19 +82,22 @@ namespace server {
 
     auto request = get_request(client_fd);
 
-    printf("Got: %s\n", request);
-
-    send_response(client_fd, "");
+    char response[] = "my best response";
+    send_response(client_fd, response);
 
     socketpp::Socketpp::destroy_fd(client_fd);
   }
 
-  char * TcpServer::get_request(int client_fd) {
-    char* data = nullptr;
-    if( socketpp::Socketpp::read_all(client_fd, data) < 0 ){
+  std::string TcpServer::get_request(int client_fd) {
+    char* data;
+    int a =0;
+    if( ( a = socketpp::Socketpp::read_all(client_fd, data)) < 0 ){
       std::cerr << "No data is read." << std::endl;
     }
-    return data;
+    std::cout << "Read " << a << " chars " << std::endl;
+    std::string str(data);
+    free(data);
+    return str;
   }
 
   void TcpServer::send_response(int client_fd, char *response) {
